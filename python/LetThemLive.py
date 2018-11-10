@@ -76,53 +76,46 @@ def sqlDissConnectFromDatabase():
 
 text = []
 Character_ID = []
+def updateEntry(ID):
+        mySQLconnection = mysql.connector.connect(user='lazare', password='cxfuKhZ9uhw9',
+                                host='178.62.187.251',
+                                database='lazare',
+        )
+        cursor = mySQLconnection .cursor()
+        sql_update_Query = "UPDATE lazare_database set DONE=0 where ID=%s" % (ID)
+        cursor.execute (sql_update_Query)
+	mySQLconnection.commit()
+        print (sql_update_Query)
+        cursor.close()
+        if(mySQLconnection .is_connected()):
+                mySQLconnection.close()
+                print("MySQL connection is closed")
+        mySQLconnection.close()
 
 def getLastEntry():
-
-        mySQLconnection = mysql.connector.connect(user='lazare', password='cxfuKhZ9uhw9',
+	mySQLconnection = mysql.connector.connect(user='lazare', password='cxfuKhZ9uhw9',
                                 host='178.62.187.251',
                                 database='lazare',
         )
 	sql_select_Query = "select * from lazare_database where DONE = TRUE"
 	cursor = mySQLconnection .cursor()
 	cursor.execute(sql_select_Query)
-	records = cursor.fetchall()
-#	text = []
-#	Character_ID = []
-	#ID Entry ID	TIME 	PIC_ID 	ENTRY_ID 	CHAR_ID 	TEXT 	ENABLE 	DONE
+	row = cursor.fetchone()
 	print("Total number of rows in lazare_database is - ", cursor.rowcount)
 	print ("Printing each row's column values i.e.  developer record")
-
-	for row in records:
-    		print("ID = ", row[0], )
-		currentID = row[0]
-		print(currentID)
-    		print("TIME = ", row[1])
-    		print("PIC_ID = ", row[2])
-    		print("ENTRY_ID = ", row[3])
-    		print("CHAR_ID = ", row[4])
-   		print("TEXT = ", row[5])
-    		text.append(row[5])
-    		Character_ID.append(row[4])
-    		print("ENABLE = ", row[6])
-    		print("DONE = ", row[7])
-
-        	sql_update_Query = "UPDATE lazare_database set DONE=0 where ID=%s" % (currentID)
-
-        	cursor = mySQLconnection .cursor()
-        	#cursor.execute(sql_update_Query)
-		cursor.execute (sql_update_Query)
-    		#cursor.execute ("UPcurrentIDDATE lazare_database SET DONE = 0 WHERE ID=1")
-		#cursor.execute ("UPDATE `lazare`.`lazare_database` SET `DONE` = '0' WHERE `lazare_database`.`ID` = " + str(currentID))
-		#cursor.execute ("UPDATE lazare.lazare_database SET DONE = 0 WHERE lazare_database.ID =" + str(currentID))
-		print (sql_update_Query)
-		#UPDATE lazare_database SET DONE = 0 WHERE ID = row[0]
-	cursor.close()
-
-#except Error as e :
-#    print ("Error while connecting to MySQL", e)
-#finally:
-    #closing database connection.
+  	print("ID = ", row[0])
+	currentID = row[0]
+	print(currentID)
+    	print("TIME = ", row[1])
+    	print("PIC_ID = ", row[2])
+    	print("ENTRY_ID = ", row[3])
+    	print("CHAR_ID = ", row[4])
+   	print("TEXT = ", row[5])
+    	text.append(row[5])
+    	Character_ID.append(row[4])
+    	print("ENABLE = ", row[6])
+	print("DONE = ", row[7])
+	updateEntry(currentID)
 
 size = (pygame.display.Info().current_w, pygame.display.Info().current_h)
 sendToText("Getting screen size" + '\n')
@@ -234,10 +227,17 @@ while not done:
        # 	screen.blit(rendered_text, my_rect.topleft)
 
     	#pygame.display.update()
+
+	#time.sleep(2)
 	getLastEntry()
 	applyTextBox(text[0],400,400,True)
+	text = []
+	time.sleep(2)
 	getLastEntry()
         applyTextBox(text[0],200,200,False)
+	text = []
+        time.sleep(2)
+        #time.sleep(2)
 
     	#applyText("Character:" + str(Character_ID[0]) + "Text:" + text[0],100,100,True)
 #    	sendToText("Charaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaacter:" + str(Character_ID[0]) + "Text:" + text[0])
