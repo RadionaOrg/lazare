@@ -41,6 +41,10 @@ from pygame.compat import unicode_
 
 pygame.init()
 
+text = []
+Character_ID = []
+
+
 #open text file, and write message to log
 def sendToText(text):
     text_file = open("lazar.log", "a")
@@ -64,18 +68,6 @@ def sqlDissConnectFromDatabase():
 		print("MySQL connection is closed")
 	mySQLconnection.close()
 
-#except mysql.connector.Error as err:
-#  if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
-#    print("Something is wrong with your user name or password")
-#  elif err.errno == errorcode.ER_BAD_DB_ERROR:
-#    print("Database does not exist")
-#  else:
-#    print(err)
-#else:
-#  mySQLconnection.close()
-
-text = []
-Character_ID = []
 def updateEntry(ID):
         mySQLconnection = mysql.connector.connect(user='lazare', password='cxfuKhZ9uhw9',
                                 host='178.62.187.251',
@@ -132,13 +124,7 @@ pygame.mixer.quit()
 sendToText("Loading images" + '\n')
 leftTalk = pygame.image.load("/home/mistery/lazare//pics/leftTalk.png")
 rightTalk = pygame.image.load("/home/mistery/lazare/pics/rightTalk.png")
-
-#pygame.mixer.init(44100, -16,2,2048)
-#sendToText("Loading sounds" + '\n')
-#CowSound= pygame.mixer.Sound("/home/pi/automat/cow.wav")
-
 font=pygame.font.SysFont("freesansbold", 20)
-#font=pygame.font.SysFont("verdana", 70)
 
 sendToText("check Keyboard function" + '\n')
 
@@ -172,16 +158,7 @@ def checkKeyboard():
 def applyTextBox(textToAdd,x,y,LeftRight):
 
         my_font = pygame.font.Font(None, 20)
-        #my_string = "Hi there! I'm a nice bit of wordwrapped text. Won't you be my friend? Honestly, wordwrapping is easy, with David's fancy new render_textrect () fu$
-        #my_rect = pygame.Rect((x, y, 300, 300))
-        #rendered_text = render_textrect(my_string, my_font, my_rect, white, black, 0)
-
-        #my_font = pygame.font.Font(None, 20)
-
-	#if(LeftRight):
-
         my_rect = pygame.Rect((x, y-100, 150, 100))
-
  	rendered_text = render_textrect(textToAdd, my_font, my_rect, white, black, 0)
 
  	if rendered_text:
@@ -215,20 +192,8 @@ done=False
 sqlConnectToDatabase()
 
 while not done:
-    #sendToText("In loop" + '\n')
     checkKeyboard()
     if(newText):
-        #my_font = pygame.font.Font(None, 22)
-        #my_string = "Hi there! I'm a nice bit of wordwrapped text. Won't you be my friend? Honestly, wordwrapping is easy, with David's fancy new render_textrect () function.\nThis is a new line.\n\nThis is another one.\n\n\nAnother line, you lucky dog."
-        #my_rect = pygame.Rect((40, 40, 300, 300))
-    	#rendered_text = render_textrect(my_string, my_font, my_rect, white, black, 0)
-
-    	#if rendered_text:
-       # 	screen.blit(rendered_text, my_rect.topleft)
-
-    	#pygame.display.update()
-
-	#time.sleep(2)
 	getLastEntry()
 	applyTextBox(text[0],400,400,True)
 	text = []
@@ -237,11 +202,4 @@ while not done:
         applyTextBox(text[0],200,200,False)
 	text = []
         time.sleep(2)
-        #time.sleep(2)
-
-    	#applyText("Character:" + str(Character_ID[0]) + "Text:" + text[0],100,100,True)
-#    	sendToText("Charaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaacter:" + str(Character_ID[0]) + "Text:" + text[0])
-	#applyText("Character:" + str(Character_ID[1]) + "Text:" + text[1],300,300,False)
-#	sendToText("Character:" + str(Character_ID[1]) + "Text:" + text[1])
 	newText = False
-	#message_display("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
