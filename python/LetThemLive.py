@@ -50,9 +50,9 @@ pygame.init()
 sendToText("Connect to sql" + '\n')
 
 try:
-  cnx = mysql.connector.connect(user='dprizmic_lazare', password='cxfuKhZ9uhw9',
-                                host='185.58.73.37',
-                                database='dprizmic_lazare',
+  cnx = mysql.connector.connect(user='user', password='pass',
+                                host='xx.xx.xx.xx',
+                                database='database',
 )
 except mysql.connector.Error as err:
   if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
