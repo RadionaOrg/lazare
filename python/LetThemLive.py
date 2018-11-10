@@ -79,9 +79,9 @@ Character_ID = []
 
 def getLastEntry():
 
-        mySQLconnection = mysql.connector.connect(user='xxx', password='xxxx',
-                                host='xxx.xxx.xxx.251',
-                                database='xxxx',
+        mySQLconnection = mysql.connector.connect(user='lazare', password='cxfuKhZ9uhw9',
+                                host='178.62.187.251',
+                                database='lazare',
         )
 	sql_select_Query = "select * from lazare_database where DONE = TRUE"
 	cursor = mySQLconnection .cursor()
