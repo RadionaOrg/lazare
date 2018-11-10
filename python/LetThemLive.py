@@ -10,13 +10,17 @@
 import sys
 import os
 import threading
-import sqlite3
-from datetime import datetime, date  
+#import sqlite3
+
+import mysql.connector
+from mysql.connector import errorcode
+
+from datetime import datetime, date
 
 #import RPi.GPIO as GPIO
 import time
 #GPIO.setmode(GPIO.BCM)
-    
+
 import pygame
 from time import gmtime, strftime
 import time
@@ -39,6 +43,27 @@ def sendToText(text):
     text_file.write(str(text))
 
 sendToText("Started" + '\n')
+
+sendToText("Init pygame" + '\n')
+pygame.init()
+
+sendToText("Connect to sql" + '\n')
+
+try:
+  cnx = mysql.connector.connect(user='dprizmic_lazare', password='cxfuKhZ9uhw9',
+                                host='185.58.73.37',
+                                database='dprizmic_lazare',
+)
+except mysql.connector.Error as err:
+  if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
+    print("Something is wrong with your user name or password")
+  elif err.errno == errorcode.ER_BAD_DB_ERROR:
+    print("Database does not exist")
+  else:
+    print(err)
+else:
+  cnx.close()
+
 
 size = (pygame.display.Info().current_w, pygame.display.Info().current_h)
 sendToText("Getting screen size" + '\n')
