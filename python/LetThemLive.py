@@ -1,6 +1,6 @@
 #############################################################################
 # Let them live again by Lazarus
-# 
+#
 # pygame
 # sql
 # gpio
@@ -68,13 +68,13 @@ def sqlDissConnectFromDatabase():
 		print("MySQL connection is closed")
 	mySQLconnection.close()
 
-def updateEntry(ID):
+def updateEntry(ID,status):
         mySQLconnection = mysql.connector.connect(user='lazare', password='cxfuKhZ9uhw9',
                                 host='178.62.187.251',
                                 database='lazare',
         )
         cursor = mySQLconnection .cursor()
-        sql_update_Query = "UPDATE lazare_database set DONE=0 where ID=%s" % (ID)
+        sql_update_Query = "UPDATE lazare_database set DONE=%s where ID=%s" % (status, ID)
         cursor.execute (sql_update_Query)
 	mySQLconnection.commit()
         print (sql_update_Query)
@@ -94,20 +94,41 @@ def getLastEntry():
 	cursor.execute(sql_select_Query)
 	row = cursor.fetchone()
 	print("Total number of rows in lazare_database is - ", cursor.rowcount)
-	print ("Printing each row's column values i.e.  developer record")
-  	print("ID = ", row[0])
-	currentID = row[0]
-	print(currentID)
-    	print("TIME = ", row[1])
-    	print("PIC_ID = ", row[2])
-    	print("ENTRY_ID = ", row[3])
-    	print("CHAR_ID = ", row[4])
-   	print("TEXT = ", row[5])
-    	text.append(row[5])
-    	Character_ID.append(row[4])
-    	print("ENABLE = ", row[6])
-	print("DONE = ", row[7])
-	updateEntry(currentID)
+	if(cursor.rowcount > 0):
+		text = []
+                screen.fill(black)
+		pygame.display.flip()
+		time.sleep(1)
+		print ("Printing each row's column values i.e.  developer record")
+  		print("ID = ", row[0])
+		currentID = row[0]
+		print(currentID)
+    		print("TIME = ", row[1])
+    		print("PIC_ID = ", row[2])
+    		print("ENTRY_ID = ", row[3])
+		characterID = row[4]
+    		print("CHAR_ID = ", row[4])
+   		print("TEXT = ", row[5])
+    		text.append(row[5])
+    		Character_ID.append(row[4])
+    		print("ENABLE = ", row[6])
+		print("DONE = ", row[7])
+		addCharacterText(characterID,row[5])
+		updateEntry(currentID,0)
+		time.sleep(2)
+		return 1
+	else:
+		#Clear Screen
+    		screen.fill((black))
+		pygame.display.flip()
+		time.sleep(2)
+		updateEntry(1,1)
+                updateEntry(2,1)
+                updateEntry(3,1)
+                updateEntry(4,1)
+                updateEntry(5,1)
+    		#screen.blit(EmptyImage,(0,0))
+	return 0
 
 size = (pygame.display.Info().current_w, pygame.display.Info().current_h)
 sendToText("Getting screen size" + '\n')
@@ -155,10 +176,23 @@ def checkKeyboard():
                 sys.exit()
                 done = True
 #setting score numbers that will change on screen
+
+def addCharacterText(CharID, text):
+	if(CharID == 1):
+		applyTextBox(text,100,200,True)
+	if(CharID == 2):
+                applyTextBox(text,300,300,False)
+        if(CharID == 3):
+                applyTextBox(text,450,250,True)
+        if(CharID == 4):
+                applyTextBox(text,150,300,False)
+
 def applyTextBox(textToAdd,x,y,LeftRight):
 
+	textSize = len(textToAdd)
+	print ("Text size: %s",(textSize))
         my_font = pygame.font.Font(None, 20)
-        my_rect = pygame.Rect((x, y-100, 150, 100))
+        my_rect = pygame.Rect((x, y-textSize*1.05, 150, 100))
  	rendered_text = render_textrect(textToAdd, my_font, my_rect, white, black, 0)
 
  	if rendered_text:
@@ -191,15 +225,21 @@ newText=True
 done=False
 sqlConnectToDatabase()
 
+
+
 while not done:
     checkKeyboard()
-    if(newText):
-	getLastEntry()
-	applyTextBox(text[0],400,400,True)
-	text = []
-	time.sleep(2)
-	getLastEntry()
-        applyTextBox(text[0],200,200,False)
-	text = []
-        time.sleep(2)
-	newText = False
+    time.sleep(2)
+    getLastEntry()
+
+
+    #if(newText):
+#	getLastEntry()
+#	applyTextBox(text[0],400,400,True)
+#	text = []
+#	time.sleep(2)
+#	getLastEntry()
+ #       applyTextBox(text[0],200,200,False)
+#	text = []
+ #       time.sleep(2)
+#	newText = False
