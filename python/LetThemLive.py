@@ -12,10 +12,14 @@ import os
 import threading
 #import sqlite3
 
+
 import mysql.connector
 from mysql.connector import errorcode
 
 from datetime import datetime, date
+
+#from textrect/textrect.py import render_textrect
+from textrect import render_textrect
 
 #import RPi.GPIO as GPIO
 import time
@@ -49,27 +53,81 @@ pygame.init()
 
 sendToText("Connect to sql" + '\n')
 
-try:
-  cnx = mysql.connector.connect(user='dprizmic_lazare', password='cxfuKhZ9uhw9',
-                                host='185.58.73.37',
-                                database='dprizmic_lazare',
-)
-except mysql.connector.Error as err:
-  if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
-    print("Something is wrong with your user name or password")
-  elif err.errno == errorcode.ER_BAD_DB_ERROR:
-    print("Database does not exist")
-  else:
-    print(err)
-else:
-  cnx.close()
+def sqlConnectToDatabase():
+	mySQLconnection = mysql.connector.connect(user='lazare', password='cxfuKhZ9uhw9',
+                                host='178.62.187.251',
+                                database='lazare',
+	)
+def sqlDissConnectFromDatabase():
+	if(mySQLconnection .is_connected()):
+		mySQLconnection.close()
+		print("MySQL connection is closed")
+	mySQLconnection.close()
 
+#except mysql.connector.Error as err:
+#  if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
+#    print("Something is wrong with your user name or password")
+#  elif err.errno == errorcode.ER_BAD_DB_ERROR:
+#    print("Database does not exist")
+#  else:
+#    print(err)
+#else:
+#  mySQLconnection.close()
+
+text = []
+Character_ID = []
+
+def getLastEntry():
+
+        mySQLconnection = mysql.connector.connect(user='xxx', password='xxxx',
+                                host='xxx.xxx.xxx.251',
+                                database='xxxx',
+        )
+	sql_select_Query = "select * from lazare_database where DONE = TRUE"
+	cursor = mySQLconnection .cursor()
+	cursor.execute(sql_select_Query)
+	records = cursor.fetchall()
+#	text = []
+#	Character_ID = []
+	#ID Entry ID	TIME 	PIC_ID 	ENTRY_ID 	CHAR_ID 	TEXT 	ENABLE 	DONE
+	print("Total number of rows in lazare_database is - ", cursor.rowcount)
+	print ("Printing each row's column values i.e.  developer record")
+
+	for row in records:
+    		print("ID = ", row[0], )
+		currentID = row[0]
+		print(currentID)
+    		print("TIME = ", row[1])
+    		print("PIC_ID = ", row[2])
+    		print("ENTRY_ID = ", row[3])
+    		print("CHAR_ID = ", row[4])
+   		print("TEXT = ", row[5])
+    		text.append(row[5])
+    		Character_ID.append(row[4])
+    		print("ENABLE = ", row[6])
+    		print("DONE = ", row[7])
+
+        	sql_update_Query = "UPDATE lazare_database set DONE=0 where ID=%s" % (currentID)
+
+        	cursor = mySQLconnection .cursor()
+        	#cursor.execute(sql_update_Query)
+		cursor.execute (sql_update_Query)
+    		#cursor.execute ("UPcurrentIDDATE lazare_database SET DONE = 0 WHERE ID=1")
+		#cursor.execute ("UPDATE `lazare`.`lazare_database` SET `DONE` = '0' WHERE `lazare_database`.`ID` = " + str(currentID))
+		#cursor.execute ("UPDATE lazare.lazare_database SET DONE = 0 WHERE lazare_database.ID =" + str(currentID))
+		print (sql_update_Query)
+		#UPDATE lazare_database SET DONE = 0 WHERE ID = row[0]
+	cursor.close()
+
+#except Error as e :
+#    print ("Error while connecting to MySQL", e)
+#finally:
+    #closing database connection.
 
 size = (pygame.display.Info().current_w, pygame.display.Info().current_h)
 sendToText("Getting screen size" + '\n')
 screen = pygame.display.set_mode((640, 480))
 #screen = pygame.display.set_mode(size, pygame.FULLSCREEN)
-
 
 sendToText("Screen is set" + '\n')
 
@@ -90,6 +148,21 @@ font=pygame.font.SysFont("freesansbold", 20)
 #font=pygame.font.SysFont("verdana", 70)
 
 sendToText("check Keyboard function" + '\n')
+
+white = (255,255,255)
+black = (0,0,0)
+
+def text_objects(text, font):
+    textSurface = font.render(text, True, white)
+    return textSurface, textSurface.get_rect()
+
+def message_display(text):
+    largeText = pygame.font.Font('freesansbold.ttf',30)
+    TextSurf, TextRect = text_objects(text, largeText)
+    TextRect.center = ((400),(400))
+    screen.blit(TextSurf, TextRect)
+    pygame.display.update()
+
 def checkKeyboard():
     for event in pygame.event.get():
         #sendToText(event.type)
@@ -103,6 +176,33 @@ def checkKeyboard():
                 sys.exit()
                 done = True
 #setting score numbers that will change on screen
+def applyTextBox(textToAdd,x,y,LeftRight):
+
+        my_font = pygame.font.Font(None, 20)
+        #my_string = "Hi there! I'm a nice bit of wordwrapped text. Won't you be my friend? Honestly, wordwrapping is easy, with David's fancy new render_textrect () fu$
+        #my_rect = pygame.Rect((x, y, 300, 300))
+        #rendered_text = render_textrect(my_string, my_font, my_rect, white, black, 0)
+
+        #my_font = pygame.font.Font(None, 20)
+
+	#if(LeftRight):
+
+        my_rect = pygame.Rect((x, y-100, 150, 100))
+
+ 	rendered_text = render_textrect(textToAdd, my_font, my_rect, white, black, 0)
+
+ 	if rendered_text:
+		screen.blit(rendered_text, my_rect.topleft)
+        if(LeftRight):
+                screen.blit(leftTalk,(x,y))
+                pygame.display.flip()
+
+        else:
+                screen.blit(rightTalk,(x,y))
+                pygame.display.flip()
+
+	pygame.display.update()
+
 def applyText(textToAdd,x,y,LeftRight):
 	if(LeftRight):
    		screen.blit(leftTalk,(x,y))
@@ -119,13 +219,29 @@ def applyText(textToAdd,x,y,LeftRight):
 
 newText=True
 done=False
+sqlConnectToDatabase()
 
 while not done:
     #sendToText("In loop" + '\n')
     checkKeyboard()
     if(newText):
-    	applyText("Left Text skdjhaksjhdkajhskdjhs",100,100,True)
-    	sendToText("Left Text applied" + '\n')
-	applyText("Right Text skdjhaksjhdkajhskdjhs",300,300,False)
-	sendToText("Right Text applied" + '\n')
+        #my_font = pygame.font.Font(None, 22)
+        #my_string = "Hi there! I'm a nice bit of wordwrapped text. Won't you be my friend? Honestly, wordwrapping is easy, with David's fancy new render_textrect () function.\nThis is a new line.\n\nThis is another one.\n\n\nAnother line, you lucky dog."
+        #my_rect = pygame.Rect((40, 40, 300, 300))
+    	#rendered_text = render_textrect(my_string, my_font, my_rect, white, black, 0)
+
+    	#if rendered_text:
+       # 	screen.blit(rendered_text, my_rect.topleft)
+
+    	#pygame.display.update()
+	getLastEntry()
+	applyTextBox(text[0],400,400,True)
+	getLastEntry()
+        applyTextBox(text[0],200,200,False)
+
+    	#applyText("Character:" + str(Character_ID[0]) + "Text:" + text[0],100,100,True)
+#    	sendToText("Charaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaacter:" + str(Character_ID[0]) + "Text:" + text[0])
+	#applyText("Character:" + str(Character_ID[1]) + "Text:" + text[1],300,300,False)
+#	sendToText("Character:" + str(Character_ID[1]) + "Text:" + text[1])
 	newText = False
+	#message_display("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
