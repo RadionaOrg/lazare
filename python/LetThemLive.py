@@ -58,9 +58,9 @@ pygame.init()
 sendToText("Connect to sql" + '\n')
 
 def sqlConnectToDatabase():
-	mySQLconnection = mysql.connector.connect(user='lazare', password='cxfuKhZ9uhw9',
-                                host='178.62.187.251',
-                                database='lazare',
+	mySQLconnection = mysql.connector.connect(user='your_user', password='your_password',
+                                host='your_host',
+                                database='your_database',
 	)
 def sqlDissConnectFromDatabase():
 	if(mySQLconnection .is_connected()):
@@ -69,9 +69,9 @@ def sqlDissConnectFromDatabase():
 	mySQLconnection.close()
 
 def updateEntry(ID,status):
-        mySQLconnection = mysql.connector.connect(user='lazare', password='cxfuKhZ9uhw9',
-                                host='178.62.187.251',
-                                database='lazare',
+        mySQLconnection = mysql.connector.connect(user='your_user', password='your_password',
+                                host='your_host',
+                                database='your_database',
         )
         cursor = mySQLconnection .cursor()
         sql_update_Query = "UPDATE lazare_database set DONE=%s where ID=%s" % (status, ID)
@@ -85,9 +85,9 @@ def updateEntry(ID,status):
         mySQLconnection.close()
 
 def getLastEntry():
-	mySQLconnection = mysql.connector.connect(user='lazare', password='cxfuKhZ9uhw9',
-                                host='178.62.187.251',
-                                database='lazare',
+	mySQLconnection = mysql.connector.connect(user='your_user', password='your_user',
+                                host='your_host',
+                                database='your_database',
         )
 	sql_select_Query = "select * from lazare_database where DONE = TRUE"
 	cursor = mySQLconnection .cursor()
